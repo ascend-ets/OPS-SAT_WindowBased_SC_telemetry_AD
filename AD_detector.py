@@ -13,7 +13,7 @@ from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 
 #%% Select experiment and load raw data and windows
 
-exp_name = "w80_s1_lstm0.3"
+exp_name = "w60_s1_lstm0.3"
 exp_dir = f"experiments/{exp_name}"
 arrays_dir = f"{exp_dir}/arrays"
 features_dir = f"{exp_dir}/features"

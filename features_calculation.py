@@ -14,7 +14,7 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 #%%
 
 # Folder name
-exp_name = "w80_s1_lstm0.3"
+exp_name = "w60_s1_lstm0.3"
 exp_dir = f"experiments/{exp_name}"
 arrays_dir = f"{exp_dir}/arrays"
 models_dir = f"{exp_dir}/models"
