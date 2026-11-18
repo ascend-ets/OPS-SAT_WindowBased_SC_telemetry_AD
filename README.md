@@ -43,7 +43,7 @@ conda create -n telemetry-ad python=3.12
 conda activate telemetry-ad
 python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
-
+```
 ## Configure and run
 
 Run the commands from the repository root so the relative paths to `data/` and `experiments/` resolve.
