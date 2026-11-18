@@ -293,12 +293,8 @@ with open(f"{exp_dir}/config.json", "w") as f:
 
 np.savez_compressed(f"{arrays_dir}/windows.npz",X_train=X_train, X1_train=X1_train, X_test=X_test, X1_test=X1_test,)
 
-info_train.to_pickle(f"{arrays_dir}/info_train.pkl")
-info_test.to_pickle(f"{arrays_dir}/info_test.pkl")
-
-window_info.to_pickle(f"{arrays_dir}/window_info.pkl")
-excluded_segments.to_pickle(f"{arrays_dir}/excluded_segments.pkl")
-
+info_train.to_csv(f"{arrays_dir}/info_train.csv", index=False)
+info_test.to_csv(f"{arrays_dir}/info_test.csv", index=False)
 #%%
 for ch in info_lstm_train['channel'].unique():
 
