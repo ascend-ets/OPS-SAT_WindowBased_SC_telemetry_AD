@@ -51,21 +51,16 @@ for model in models:
             
             for metric in metrics:
                 results[model_name][feat][metric].append(scores[metric])
-
-
 #%%
-import numpy as np
-import matplotlib.pyplot as plt
 
 # ==========================================
 # CONFIGURATION
 # ==========================================
 
-window_sizes = np.array([15, 30, 45, 60, 75, 80])
+window_sizes = np.array(window_sizes)
 
-models = ["Random Forest", "AdaBoost"]
 metrics = ["Precision", "Recall", "F1"]
-features = ["I", "II", "III"]
+
 
 # Colors for metrics
 metric_colors = {
@@ -117,7 +112,7 @@ def plot_comparison(
             # Fixed feature set, compare metrics
             for metric in metrics:
 
-                values = results[model][fixed_value][metric]
+                values = results[model_names[model]][fixed_value][metric]
 
                 ax.plot(
                     window_sizes,
@@ -135,7 +130,7 @@ def plot_comparison(
             # Fixed metric, compare feature sets
             for feature in features:
 
-                values = results[model][feature][fixed_value]
+                values = results[model_names[model]][feature][fixed_value]
 
                 ax.plot(
                     window_sizes,
@@ -148,7 +143,7 @@ def plot_comparison(
                     label=f"Feature set {feature}"
                 )
 
-        ax.set_title(model)
+        ax.set_title(model_names[model])
         ax.set_ylabel("Metric value")
 
         ax.set_xticks(window_sizes)
