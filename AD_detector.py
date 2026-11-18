@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-@author: saraC
-"""
 
 import os
 import random
@@ -12,6 +9,7 @@ import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 from sklearn.preprocessing import StandardScaler
+from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 
 #%% Select experiment and load raw data and windows
 
@@ -24,8 +22,8 @@ data = np.load(f"{arrays_dir}/windows.npz")
 X_train = data["X_train"]
 X_test = data["X_test"]
 
-info_train = pd.read_pickle(f"{arrays_dir}/info_train.pkl")
-info_test = pd.read_pickle(f"{arrays_dir}/info_test.pkl")
+info_train = pd.read_csv(f"{arrays_dir}/info_train.csv")
+info_test = pd.read_csv(f"{arrays_dir}/info_test.csv")
 
 y_train = info_train['window_label']
 y_test = info_test['window_label']
@@ -49,6 +47,8 @@ elif sel_features == "II":
 elif sel_features == "III":
     features = ['feat_mean', 'feat_var', 'feat_std', 'feat_diff_var', 
                 'feat_diff2_var', 'feat_SMA_err', 'feat_LSTM_err', 'feat_FT_std']
+elif sel_features == "windows":
+    features = None
 else:
     raise ValueError(f"Unknown sel_features = {sel_features}")
             
@@ -82,9 +82,6 @@ with open(f"{classifier_dir}/classifier_config.json", "w") as f:
     json.dump(classifier_config, f, indent=4)
 #%% Define the classification models
 
-# Libraries
-from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
-
 # Models and parameters
 models = {
     "RF": RandomForestClassifier(
@@ -101,7 +98,6 @@ models = {
 }
 
 #%%
-
 
 predictions_all = []
 
@@ -121,11 +117,8 @@ for model_name, model in models.items():
     else:
         y_score = y_pred
 
-    # guardar modelo
-    joblib.dump(
-        model,
-        f"{classifier_dir}/{model_name}.pkl"
-    )
+    # save model
+    joblib.dump(model, f"{classifier_dir}/{model_name}.pkl")
 
     # guardar predicciones
     pred_df = info_test.copy()
@@ -134,16 +127,4 @@ for model_name, model in models.items():
     pred_df["y_pred"] = y_pred
     pred_df["y_score"] = y_score
 
-    pred_df.to_csv(
-        f"{classifier_dir}/predictions_{model_name}.csv",
-        index=False
-    )
-
-    predictions_all.append(pred_df)
-
-predictions_all = pd.concat(predictions_all, ignore_index=True)
-
-predictions_all.to_csv(
-    f"{classifier_dir}/predictions_all.csv",
-    index=False
-)
+    pred_df.to_csv(f"{classifier_dir}/predictions_{model_name}.csv", index=False)
