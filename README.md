@@ -34,16 +34,15 @@ The data file is not included in this repository. Place `segments.csv` in `data/
 
 ## Requirements
 
-Use a Python version supported by the installed TensorFlow release. Install the packages used by the scripts in an isolated environment:
+This project requires Python 3.12. Package dependencies and their versions are listed in `requirements.txt`.
+
+Create the Conda environment and install the dependencies from the repository root:
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate
+conda create -n telemetry-ad python=3.12
+conda activate telemetry-ad
 python -m pip install --upgrade pip
-python -m pip install numpy pandas matplotlib scipy scikit-learn tensorflow tqdm pyod
-```
-
-On Windows, activate the environment with `.venv\Scripts\activate` instead of the `source` command.
+python -m pip install -r requirements.txt
 
 ## Configure and run
 
