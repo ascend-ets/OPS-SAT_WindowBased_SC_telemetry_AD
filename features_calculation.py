@@ -16,7 +16,7 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 
 #%%
 
-# Nombres de carpetas
+# Folder name
 exp_name = "w80_s1_lstm0.3"
 exp_dir = f"experiments/{exp_name}"
 arrays_dir = f"{exp_dir}/arrays"
@@ -28,7 +28,7 @@ os.makedirs(features_dir, exist_ok=True)
 with open(f"{exp_dir}/config.json", "r") as f:
     config = json.load(f)
 
-#Parámetros de exp elegido
+#Experiment parameters
 w_l = config["window_length"]
 stride = config["stride"]
 lstm_fraction = config["lstm_fraction"]
@@ -42,10 +42,10 @@ X1_train = data["X1_train"]
 X_test = data["X_test"]
 X1_test = data["X1_test"]
 
-info_train = pd.read_pickle(f"{arrays_dir}/info_train.pkl")
-info_test = pd.read_pickle(f"{arrays_dir}/info_test.pkl")
+info_train = pd.read_csv(f"{arrays_dir}/info_train.csv")
+info_test = pd.read_csv(f"{arrays_dir}/info_test.csv")
 
-# Crear dataset
+# Create dataset
 dataset_train = info_train.copy()
 dataset_test = info_test.copy()
 
@@ -75,8 +75,7 @@ transformations = {
 for key, func in transformations.items():
     dataset_train[key] = np.apply_along_axis(func, axis=1, arr=X_train)
     dataset_test[key] = np.apply_along_axis(func, axis=1, arr=X_test)
-
-
+    
 #%%
 
 ## Features II
@@ -103,13 +102,10 @@ for ch in tqdm(dataset_train["channel"].unique()):
     channel_mask_test = dataset_test["channel"] == ch
 
     pred_train = model.predict(X_train[channel_mask_train.values][..., None], verbose=0).flatten()
-    
     pred_test = model.predict(X_test[channel_mask_test.values][..., None], verbose=0).flatten()
-
+    
     dataset_train.loc[channel_mask_train, "feat_LSTM_err"] = (pred_train - X1_train[channel_mask_train.values])
-
     dataset_test.loc[channel_mask_test, "feat_LSTM_err"] = (pred_test - X1_test[channel_mask_test.values])
-
 
 # FFT std
 hann = sig.windows.hann(w_l)
@@ -118,22 +114,12 @@ def ft_std_window(w):
     return np.std((2 / w_l) * (1 / w_l) * np.abs(np.fft.rfft((w - np.mean(w)) * hann)))
 
 dataset_train["feat_FT_std"] = np.apply_along_axis(ft_std_window, axis=1, arr=X_train)
-
 dataset_test["feat_FT_std"] = np.apply_along_axis(ft_std_window, axis=1, arr=X_test)
 
 #%%
 # Create df and save files
 dataset = pd.concat([dataset_train, dataset_test], ignore_index=True)
 dataset.to_csv(f"{features_dir}/dataset_features.csv", index=False)
-dataset.to_pickle(f"{features_dir}/dataset_features.pkl")
 
 print(dataset.shape)
 print(dataset.columns)
-
-
-
-
-
-
-
-
